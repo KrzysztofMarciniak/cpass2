@@ -1,0 +1,43 @@
+cpass2
+
+tldr
+	Minimal password manager. C99, OpenSSL.
+	scrypt key derivation, AES-256-GCM encryption.
+	One file per entry, random file names, real names only in encrypted MAIN.
+	Master password is the only secret.
+
+entry format
+	password
+	username
+	website
+	extra (free text, any number of lines)
+
+commands
+	cpass2 init		create store, set master password
+	cpass2 add NAME		add entry (NAME may be Dir/site.com)
+	cpass2 get NAME		print entry, password first
+	cpass2 ls		list entries as a tree
+	cpass2 edit NAME	edit entry in $EDITOR
+	cpass2 rm NAME		remove entry
+	cpass2 copy NAME	password to clipboard, prints [in clipboard]
+
+compile
+	cc -std=c99 -O2 -Wall -o cpass2 cpass2.c -lcrypto
+
+	clipboard command (default xclip -selection clipboard):
+	cc -std=c99 -O2 -Wall -DCPASS2_CLIP=\"xsel\ -bi\" -o cpass2 cpass2.c -lcrypto
+
+install
+	install -m 755 cpass2 /usr/local/bin/cpass2
+
+	as a pass replacement:
+	install -m 755 cpass2 /usr/local/bin/pass
+
+environment
+	CPASS2_DIR	store directory, default ~/.cpass2/
+	EDITOR		used by edit, default vi
+
+files
+	salt		16 byte scrypt salt
+	MAIN		encrypted index (id -> name)
+	<hex id>	encrypted entry
